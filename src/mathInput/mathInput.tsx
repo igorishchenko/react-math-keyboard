@@ -259,6 +259,7 @@ export const MathInput = ({
         id={`mq-keyboard-${idCounter.current}-field`}
         ref={spanRef}
       ></span>
+      {/* @ts-ignore */}
       <MathFieldContext.Provider value={mathfield.current}>
         {showKeyboard && (
           <Keyboard
