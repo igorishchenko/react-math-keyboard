@@ -4,31 +4,28 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 module.exports = (env, argv) => {
   return {
     entry:
-      argv.mode === "development"
-        ? "./examples/home.tsx"
-        : // : {
-          //     mathInput: "./src/mathInput/mathInput.tsx",
-          //     keyProps: "./src/keyboard/keys/key.tsx",
-          //     allKeysProps: "./src/keyboard/keys/keys.ts",
-          //   },
-          "./src/index.tsx",
+      argv.mode === "development" ? "./examples/home.tsx" : "./src/index.tsx", // Simplified entry for production
     output: {
       path: path.join(__dirname, "./dist"),
       filename: "react-math-keyboard.js",
       library: "react-math-keyboard",
       libraryTarget: "umd",
       umdNamedDefine: true,
-      // libraryExport: "default",
-      // globalObject: this,
       globalObject: `typeof self !== 'undefined' ? self : this`,
       publicPath: "",
     },
     mode: process.env.NODE_ENV || "development",
     resolve: {
       extensions: [".tsx", ".ts", ".js", ".jsx"],
+      alias: {
+        react: path.resolve(__dirname, "node_modules/react"),
+        "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      },
     },
-    devServer: { static: path.join(__dirname, "src") },
-    // target: "node",
+    devServer: {
+      static: path.join(__dirname, "src"),
+      hot: true, // Enable hot reloading
+    },
     externals:
       argv.mode !== "development"
         ? {
@@ -36,17 +33,16 @@ module.exports = (env, argv) => {
               commonjs: "react",
               commonjs2: "react",
               amd: "react",
-              root: "react",
+              root: "React", // Ensure the correct casing here
             },
             "react-dom": {
               commonjs: "react-dom",
               commonjs2: "react-dom",
               amd: "ReactDOM",
-              root: "ReactDOM",
+              root: "ReactDOM", // Ensure the correct casing here
             },
           }
         : {},
-
     module: {
       rules: [
         {
@@ -68,7 +64,6 @@ module.exports = (env, argv) => {
         },
         {
           test: /\.css$/i,
-          // include: path.join(__dirname, "src"),
           use: ["style-loader", "css-loader"],
         },
         {
@@ -80,8 +75,6 @@ module.exports = (env, argv) => {
               "@font-face {\n" +
               "  /* Heavy fonts have been removed */\n" +
               "  font-family: Symbola;\n" +
-              // '  src: url("font/Symbola.woff2") format("woff2"), url("font/Symbola.woff") format("woff");\n' +
-              // '  src: url("font/Symbola.ttf") format("truetype");\n',
               "}",
             flags: "g",
           },
